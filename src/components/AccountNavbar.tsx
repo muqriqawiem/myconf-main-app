@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
     Cloud,
     CreditCard,
@@ -39,6 +40,8 @@ import { signOut } from "next-auth/react";
   }
   
   export function Account({fullname,email}:User) {
+    const [isHover, setIsHover] = React.useState(false);
+
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -55,17 +58,17 @@ import { signOut } from "next-auth/react";
             </DropdownMenuItem>
             <DropdownMenuItem>
                     <Mail className="mr-2 h-4 w-4" />
-                    <span>{email}</span>
+                    <span className="truncate w-full">{email}</span>
                   </DropdownMenuItem>
             <DropdownMenuItem>
               <CreditCard className="mr-2 h-4 w-4" />
               <span>Billing</span>
             </DropdownMenuItem>
-            {/* <DropdownMenuItem>
+            <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span> */}
+              <span>Settings</span>
               {/* <DropdownMenuShortcut>⌘S</DropdownMenuShortcut> */}
-            {/* </DropdownMenuItem> */}
+            </DropdownMenuItem>
             {/* <DropdownMenuItem>
               <Keyboard className="mr-2 h-4 w-4" />
               <span>Keyboard shortcuts</span>
@@ -73,7 +76,16 @@ import { signOut } from "next-auth/react";
           </DropdownMenuGroup>
           
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={()=>signOut()}>
+          <DropdownMenuItem
+            onClick={()=>signOut()}
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+            style={{
+              backgroundColor: isHover ? '#DC143C' : 'transparent',
+              color: isHover ? 'white' : 'inherit',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s, color 0.3s'
+          }}>
             <LogOut  className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>
@@ -81,4 +93,3 @@ import { signOut } from "next-auth/react";
       </DropdownMenu>
     )
   }
-  
