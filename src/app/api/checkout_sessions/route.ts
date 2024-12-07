@@ -45,12 +45,12 @@ export async function POST(req: NextRequest) {
         {
           price_data: {
             currency: 'USD',
-            // currency: 'INR',
 
             product_data: {
-              name: 'Payment for Services',
+              name: 'Paper Submission Upgrade Fee',
+              images: ['https://i.imgur.com/hXBvvxx.png'],
             },
-            unit_amount: 5000, // 2000 INR in the smallest currency unit (paisa)
+            unit_amount: 5000,
           },
           quantity: 1,
         },
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
           key: 'conferenceSelection',
           label: {
             type: 'custom',
-            custom: 'Choose the conference',
+            custom: 'Conference Name',
           },
           type: 'dropdown',
           dropdown: {
