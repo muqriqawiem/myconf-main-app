@@ -138,7 +138,7 @@ function Navbar() {
       {/* Desktop Navigation */}
       <div className="hidden container mx-auto lg:flex flex-col md:flex-row justify-between items-center">
         <Link href="/" className="text-xl font-bold">
-          <Image src={"/AdroidCMTLogo.png"} alt={"Adroid CMS"} width={150} height={100} />
+          <Image src={"/AdroidCMTLogo.png"} alt={"MYCONF"} width={150} height={100} />
         </Link>
         <div className="flex flex-col lg:flex-row gap-6 text-center">
           <Link href="/" className="hover:font-bold">
