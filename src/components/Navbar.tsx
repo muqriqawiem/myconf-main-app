@@ -119,7 +119,7 @@ function Navbar() {
                 Create Conference
               </Link>
               <Link href="/smart-sub" className="hover:font-bold" onClick={() => setOpen(false)}>
-                SmartSub
+                ConfHub
               </Link>
               <Link href="/pricing" className="hover:font-bold" onClick={() => setOpen(false)}>
                 Pricing
@@ -145,7 +145,7 @@ function Navbar() {
             Home
           </Link>
           <Link href="/smart-sub" className="hover:font-bold">
-            SmartSub
+            ConfHub
           </Link>
           <Link href="/pricing" className="hover:font-bold">
             Pricing

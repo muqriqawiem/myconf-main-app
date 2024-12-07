@@ -11,7 +11,7 @@ const PrivacyPolicy: React.FC = () => {
       <section className="mb-12">
         <ol className="list-decimal list-inside space-y-4">
           <li>
-            <strong>Introduction:</strong> This Privacy Policy outlines how adroid CMS collects, uses, discloses, and safeguards the personal data submitted through our Conference Management System (CMS). By using the system for paper submission, registration, or other activities related to the conference, you agree to the terms of this Privacy Policy.
+            <strong>Introduction:</strong> This Privacy Policy outlines how MYCONF collects, uses, discloses, and safeguards the personal data submitted through our Conference Management System (CMS). By using the system for paper submission, registration, or other activities related to the conference, you agree to the terms of this Privacy Policy.
           </li>
           <li>
             <strong>Data Collection:</strong> We collect the following personal data from users:
@@ -41,10 +41,10 @@ const PrivacyPolicy: React.FC = () => {
             <strong>Data Retention:</strong> We retain personal data for as long as necessary to fulfill the purpose for which it was collected, or as required by legal obligations. This typically includes retaining data for conference archives, follow-up communications, and proceedings publication.
           </li>
           <li>
-            <strong>Your Rights:</strong> You have the right to access, correct, or delete your personal data at any time. To exercise these rights, contact us at <Link href='mailto:adroidconnetz@gmail.com'>adroidconnetz@gmail.com</Link> . We will respond within a reasonable timeframe.
+            <strong>Your Rights:</strong> You have the right to access, correct, or delete your personal data at any time. To exercise these rights, contact us at <Link href='mailto:support@myconf.com'>support@myconf.com</Link> . We will respond within a reasonable timeframe.
           </li>
           <li>
-            <strong>Changes to Privacy Policy:</strong> adroid CMS reserves the right to modify this Privacy Policy at any time. Any changes will be posted on the conference website and will become effective immediately.
+            <strong>Changes to Privacy Policy:</strong> MYCONF reserves the right to modify this Privacy Policy at any time. Any changes will be posted on the conference website and will become effective immediately.
           </li>
         </ol>
       </section>
