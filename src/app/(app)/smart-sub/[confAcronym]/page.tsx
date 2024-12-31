@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import {
@@ -20,22 +18,20 @@ import Link from "next/link";
 import { IConference } from "@/model/Conference";
 import { useGetConferenceByConferenceIDQuery } from "@/store/features/ConferenceApiSlice";
 import Loader from "@/components/Loader";
-
+import { PaymentRequestButtonElement } from "@stripe/react-stripe-js";
 
 const ConferencePage = () => {
   const params = useParams();
-  const [loading, setLoading] = useState(true);
-  // const [conferenceDetails, setConferenceDetails] = useState<IConference | null>(null);
-
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const profileUrl = `${baseUrl}/submit-paper/${params.confAcronym}`;
+  const invitationUrl = `${baseUrl}/send-invitation/`;
 
-    const { data:conferenceDetails, error, isLoading } = useGetConferenceByConferenceIDQuery(params.confAcronym as string);
-
-    console.log(conferenceDetails)
+  const { data: conferenceDetails, error, isLoading } = useGetConferenceByConferenceIDQuery(
+    params.confAcronym as string
+  );
 
   if (isLoading) {
-    return <Loader/>
+    return <Loader />;
   }
 
   if (!conferenceDetails) {
@@ -72,22 +68,31 @@ const ConferencePage = () => {
       <div className="shadow p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">{conferenceTitle}</h1>
-          {conferenceIsAcceptingPaper && (
-            <Link href={profileUrl} target="_blank">
-            <Button>
-              Submit Paper
-            </Button>
+          <div className="flex space-x-4">
+            {conferenceIsAcceptingPaper && (
+              <Link href={profileUrl} target="_blank">
+                <Button>Submit Paper</Button>
+              </Link>
+            )}
+            <Link href={invitationUrl} target="_blank">
+              <PaymentRequestButtonElement>Send Invitation</Button>
             </Link>
-          )}
+          </div>
         </div>
         <Table className="min-w-full">
           <TableBody>
             <TableRow>
               <TableHead>Organizer</TableHead>
               <TableCell className="font-medium">
-                <a href={conferenceOrganizerWebPage} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                <a
+                  href={conferenceOrganizerWebPage}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline"
+                >
                   {conferenceOrganizer.fullname}
-                </a> ({conferenceOrganizerRole})<br />
+                </a>{" "}
+                ({conferenceOrganizerRole})<br />
                 Phone: {conferenceOrganizerPhoneNumber}
               </TableCell>
             </TableRow>
@@ -98,13 +103,13 @@ const ConferencePage = () => {
             <TableRow>
               <TableHead>Conference website</TableHead>
               <Link href={conferenceOrganizerWebPage}>
-              <TableCell className="font-medium">{conferenceOrganizerWebPage}</TableCell>
+                <TableCell className="font-medium">{conferenceOrganizerWebPage}</TableCell>
               </Link>
             </TableRow>
             <TableRow>
               <TableHead>Submission link</TableHead>
               <Link href={profileUrl}>
-              <TableCell className="font-medium">{profileUrl}</TableCell>
+                <TableCell className="font-medium">{profileUrl}</TableCell>
               </Link>
             </TableRow>
             <TableRow>
@@ -141,17 +146,10 @@ const ConferencePage = () => {
             </TableRow>
             <TableRow>
               <TableHead>Area Notes</TableHead>
-              <TableCell className="font-medium">{conferenceAreaNotes || "No Area Notes are present for this conference"}</TableCell>
-            </TableRow>
-{/*             
-            <TableRow>
-              <TableHead>Status</TableHead>
               <TableCell className="font-medium">
-                <Badge variant={conferenceStatus}>
-                  {conferenceStatus && conferenceStatus.charAt(0).toUpperCase() + conferenceStatus.slice(1)}
-                </Badge> - {conferenceStatusComment}
+                {conferenceAreaNotes || "No Area Notes are present for this conference"}
               </TableCell>
-            </TableRow> */}
+            </TableRow>
             <TableRow>
               <TableHead>Additional Information</TableHead>
               <TableCell className="font-medium">{conferenceAnyOtherInformation}</TableCell>

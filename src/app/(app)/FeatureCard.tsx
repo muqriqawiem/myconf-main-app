@@ -62,7 +62,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { FaTools, FaFileAlt, FaSearch, FaChartLine, FaClipboardList, FaLock, FaUsersCog, FaRegBell } from "react-icons/fa";
+import { FaTools, FaFileAlt, FaSearch, FaChartLine, FaClipboardList, FaLock, FaUsersCog, FaEnvelope, FaRegBell } from "react-icons/fa";
 
 const features = [
   {
@@ -100,6 +100,12 @@ const features = [
   //   description: "Enhance teamwork with features that facilitate communication between organizers, reviewers, and authors. Collaborate seamlessly to ensure the success of your conferences.",
   //   icon: <FaUsersCog size={40} className="text-teal-600" />,
   // },
+  {
+    title: "Invitation Management",
+    description:
+      "Effortlessly send, track, and manage invitations for conferences. Keep track of responses and view invitation history, ensuring seamless communication with participants and collaborators.",
+    icon: <FaEnvelope size={40} className="text-purple-600" />,
+  },
   {
     title: "Notifications & Reminders",
     description: "Stay updated with automated notifications for crucial updates and deadlines. Our system ensures you and your participants remain informed with timely reminders.",
