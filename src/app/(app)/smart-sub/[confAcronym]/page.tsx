@@ -74,9 +74,6 @@ const ConferencePage = () => {
                 <Button>Submit Paper</Button>
               </Link>
             )}
-            <Link href={invitationUrl} target="_blank">
-              <PaymentRequestButtonElement>Send Invitation</Button>
-            </Link>
           </div>
         </div>
         <Table className="min-w-full">
