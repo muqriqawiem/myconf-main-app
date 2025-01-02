@@ -35,14 +35,14 @@ import {
             fontStyle="normal"
           />
         </Head>
-        <Preview>Your conference "{conferenceTitle}" has been successfully created.</Preview>
+        <Preview>Your conference &quot;{conferenceTitle}&quot; has been successfully created.</Preview>
         <Section>
           <Row>
             <Heading as="h2">Dear {username},</Heading>
           </Row>
           <Row>
             <Text>
-              We are pleased to confirm that your conference, "<strong>{conferenceTitle}</strong>", has been successfully created on our platform. Below are the key details for your reference:
+              We are pleased to confirm that your conference, &quot;<strong>{conferenceTitle}</strong>&quot;, has been successfully created on our platform. Below are the key details for your reference:
             </Text>
           </Row>
           <Row>

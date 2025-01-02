@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -7,29 +8,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import moment from 'moment';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { useGetOrganizedConferencesQuery } from '@/store/features/ConferenceApiSlice';
-import Loader from '@/components/Loader';
-import EditPopup from './EditPopup';
-import { useGetSubmittedPapersQuery } from '@/store/features/PaperApiSlice';
-import EditConferencePopup from "./EditConferencePopup";
-import { useState } from "react";
-import { Toggle } from "@/components/ui/toggle";
+import moment from "moment";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useGetOrganizedConferencesQuery } from "@/store/features/ConferenceApiSlice";
+import { useGetSubmittedPapersQuery } from "@/store/features/PaperApiSlice";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PulseLoader } from "react-spinners";
+import ReviewedPapersComponent from "./(reviewSystem)/ReviewPaperComponent";
+import EditPopup from './EditPopup';
+import EditConferencePopup from "./EditConferencePopup";
 import { useParams } from 'next/navigation';
+import { Toggle } from "@/components/ui/toggle";
 
+// Organized Conferences Component
 const OrganizedConferenceComponent = () => {
-  const { data: organizedConferences, error: conferencesError, isLoading: loadingConferences } = useGetOrganizedConferencesQuery();
+  const { data: organizedConferences, isLoading } = useGetOrganizedConferencesQuery();
   const params = useParams();
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
   return (
     <div className='flex justify-center'>
-      <Card className='w-full md:w-3/4 '>
+      <Card className='w-full md:w-3/4 border border-gray-200'> {/* Added border and removed shadow */}
         <CardHeader>
           <CardTitle>Organized Conferences</CardTitle>
         </CardHeader>
@@ -44,7 +46,7 @@ const OrganizedConferenceComponent = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loadingConferences ? (
+              {isLoading ? (
                 <TableRow className="w-full justify-center items-center text-center ">
                   <TableCell colSpan={4}><span className="">Loading <PulseLoader className="inline-block" size={6} /></span></TableCell>
                 </TableRow>
@@ -85,12 +87,13 @@ const OrganizedConferenceComponent = () => {
   );
 };
 
+// Submitted Papers Component
 const SubmittedPaperComponent = () => {
-  const { data: submittedPapers, error: SubmittedPaperError, isLoading: loadingPapers } = useGetSubmittedPapersQuery();
+  const { data: submittedPapers, isLoading } = useGetSubmittedPapersQuery();
 
   return (
     <div className='flex justify-center items-start'>
-      <Card className='w-full md:w-3/4'>
+      <Card className='w-full md:w-3/4 border border-gray-200'> {/* Added border and removed shadow */}
         <CardHeader>
           <CardTitle>Submitted Papers</CardTitle>
         </CardHeader>
@@ -106,7 +109,7 @@ const SubmittedPaperComponent = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loadingPapers ? (
+              {isLoading ? (
                 <TableRow className="w-full justify-center items-center text-center ">
                   <TableCell colSpan={5}><span className="">Loading <PulseLoader className="inline-block" size={6} /></span></TableCell>
                 </TableRow>
@@ -148,43 +151,94 @@ const SubmittedPaperComponent = () => {
   );
 };
 
+// Main Page
 const Page: React.FC = () => {
-  const [showConferences, setShowConferences] = useState(true);
-  const [role, setRole] = useState('Conference Chair');
+  const [role, setRole] = useState<'Conference Chair' | 'Author'>('Conference Chair');
+  const [activeTab, setActiveTab] = useState<'organized' | 'submitted' | 'reviewManagement'>('organized');
 
   const handleToggle = () => {
-    setShowConferences((prev) => !prev);
-    setRole((prev) => (prev === 'Author' ? 'Conference Chair' : 'Author'));
+    const newRole = role === 'Conference Chair' ? 'Author' : 'Conference Chair';
+    setRole(newRole);
+    // Update the active tab based on the new role
+    setActiveTab(newRole === 'Conference Chair' ? 'organized' : 'submitted');
+  };
+
+  // Explicitly type the onValueChange function to accept a string
+  const handleTabChange = (value: string) => {
+    if (value === 'organized' || value === 'submitted' || value === 'reviewManagement') {
+      setActiveTab(value);
+    }
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="flex flex-col items-center mb-6">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Dashboard</h1>
+    <div className="container mx-auto p-8">
+      <div className="flex flex-col items-center mb-8">
+        <h1 className="text-5xl font-extrabold text-gray-800 mb-4">
+          Dashboard
+        </h1>
         <div className="flex items-center gap-4">
           <p className="text-lg font-medium text-gray-600">
             Current View: <span className="text-blue-600">{role}</span>
           </p>
           <Toggle
-            aria-label="Toggle between organized conferences and submitted papers"
+            aria-label="Toggle between Conference Chair and Author views"
             onClick={handleToggle}
             className={`flex items-center px-4 py-2 bg-gray-200 rounded-lg cursor-pointer transition-colors duration-300
-                  ${showConferences ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'}`}
+              ${role === 'Conference Chair' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'}`}
           >
-            {showConferences ? (
-              <span className="font-medium text-sm transition-opacity duration-300">View as Author</span>
+            {role === 'Conference Chair' ? (
+              <span className="font-medium text-sm transition-opacity duration-300">Switch to Author</span>
             ) : (
-              <span className="font-medium text-sm transition-opacity duration-300">View as Conference Chair</span>
+              <span className="font-medium text-sm transition-opacity duration-300">Switch to Conference Chair</span>
             )}
           </Toggle>
         </div>
       </div>
-      <div className="min-h-screen">
-        {showConferences ? (
-          <OrganizedConferenceComponent />
-        ) : (
-          <SubmittedPaperComponent />
-        )}
+      <div className="bg-white rounded-lg p-6 border border-gray-200"> {/* Added border and removed shadow */}
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+          <TabsList className="flex justify-center gap-6 mb-8">
+            {role === 'Conference Chair' && (
+              <TabsTrigger
+                value="organized"
+                className="px-6 py-3 text-lg font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
+              >
+                Organized Conferences
+              </TabsTrigger>
+            )}
+            {role === 'Author' && (
+              <TabsTrigger
+                value="submitted"
+                className="px-6 py-3 text-lg font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
+              >
+                Submitted Papers
+              </TabsTrigger>
+            )}
+            {role === 'Conference Chair' && (
+              <TabsTrigger
+                value="reviewManagement"
+                className="px-6 py-3 text-lg font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
+              >
+                Review Management
+              </TabsTrigger>
+            )}
+          </TabsList>
+
+          {role === 'Conference Chair' && (
+            <TabsContent value="organized" className="p-4"> {/* Adjusted padding */}
+              <OrganizedConferenceComponent />
+            </TabsContent>
+          )}
+          {role === 'Author' && (
+            <TabsContent value="submitted" className="p-4"> {/* Adjusted padding */}
+              <SubmittedPaperComponent />
+            </TabsContent>
+          )}
+          {role === 'Conference Chair' && (
+            <TabsContent value="reviewManagement" className="p-4"> {/* Adjusted padding */}
+              <ReviewedPapersComponent />
+            </TabsContent>
+          )}
+        </Tabs>
       </div>
     </div>
   );
