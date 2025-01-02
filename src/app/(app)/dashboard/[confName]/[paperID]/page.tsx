@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { CommentDialog } from "./CommentDialog";
 import { Review1Dialog } from "./Review1";
-import { Review2Dialog } from "./Review2";
+// import { Review2Dialog } from "./Review2";
 import { useGetPaperDetailsByPaperIDQuery } from "@/store/features/ConferenceDashboardPaperSlice";
 
 interface PaperDetails {
@@ -30,8 +30,8 @@ interface PaperDetails {
   paperStatus: "submitted" | "accepted" | "rejected" | "review" | "outline" | null | undefined,
   paperID: string;
   paperFile: string;
-  paperReview1:string,
-  comment:string,
+  paperReview1: string,
+  comment: string,
 }
 
 interface AuthorDetails {
@@ -41,16 +41,16 @@ interface AuthorDetails {
   affilation: string;
   webpage: string; // ye abhi dalega,
 }
-type params={
-  paperID:string
+type params = {
+  paperID: string
 }
 const Page = () => {
   const params = useParams() as params;
   // const [paperDetails, setPaperDetails] = useState<PaperDetails | null>(null);
 
-  const {data:paperDetails,isLoading,error}=useGetPaperDetailsByPaperIDQuery(params.paperID)
+  const { data: paperDetails, isLoading, error } = useGetPaperDetailsByPaperIDQuery(params.paperID)
   console.log(error)
-  if(error){
+  if (error) {
     return <div className="text-center py-10 text-red-400 text-lg">Sorry, An Unexpected Error has been occured</div>
   }
   if (isLoading) {
@@ -78,9 +78,9 @@ const Page = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Paper Details</h1>
           <div className="space-x-2">
-            <CommentDialog paperID={params.paperID as string} comment={paperDetails.comment} Authors={[...paperAuthor,...correspondingAuthor]}/>
-            <Review1Dialog paperID={params.paperID as string} Review1={paperDetails.paperReview1}/>
-            <Review2Dialog paperID={params.paperID as string} Review1={paperDetails.paperReview1}/>
+            <CommentDialog paperID={params.paperID as string} comment={paperDetails.comment} Authors={[...paperAuthor, ...correspondingAuthor]} />
+            <Review1Dialog paperID={params.paperID as string} Review1={paperDetails.paperReview1} />
+            {/* <Review2Dialog paperID={params.paperID as string} Review1={paperDetails.paperReview1}/> */}
           </div>
         </div>
         <Table className="min-w-full">
@@ -160,7 +160,7 @@ const Page = () => {
                 <TableRow key={index + paperAuthor.length}>
                   <TableCell className="font-medium">
                     {corresponding.fullname}{" "}
-                    
+
                   </TableCell>
                   <TableCell>{corresponding.email}</TableCell>
                   <TableCell>{corresponding.country}</TableCell>
@@ -176,7 +176,7 @@ const Page = () => {
                     </a>
                   </TableCell>
                   <Badge className="mt-4 ml-4" variant="outline">
-                      Corresponding Author
+                    Corresponding Author
                   </Badge>
                 </TableRow>
               )

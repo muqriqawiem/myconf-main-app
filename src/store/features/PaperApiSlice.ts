@@ -1,6 +1,5 @@
 import { IConference } from '@/model/Conference';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-// import { SubmittedPaper as paperType } from '@/types/SubmittedPaperType';
 
 interface ApiResponse<T> {
     success: boolean;
@@ -66,12 +65,25 @@ export const PaperApiSlice = createApi({
         }
         return response;
       }
-    })
+    }),
+    // Add the new endpoint here
+    getPapersForConferenceChair: builder.query<SubmittedPaper[], void>({
+      query: () => `/papers-for-conference-chair`, // Adjust the endpoint as needed (API had been deleted)
+      transformResponse: (response: ApiResponse<{ papers: SubmittedPaper[] }>) => {
+        if (response.success) {
+          return response.data.papers;
+        } else {
+          throw new Error(response.message);
+        }
+      },
+      providesTags: ['paper'],
+    }),
   }),
 });
 
 export const { 
   useGetSubmittedPapersQuery,
   useGetConferencePapersQuery,
-  useDeleteConferencePaperMutation
+  useDeleteConferencePaperMutation,
+  useGetPapersForConferenceChairQuery, // Export the new hook
 } = PaperApiSlice;

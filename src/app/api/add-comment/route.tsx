@@ -20,7 +20,7 @@ export async function PATCH(request: Request) {
     }
 
     try {
-        const { comment, status,paperID,authorEmails,conferenceAcronmym} = await request.json();
+        const { comment, status, paperID, authorEmails, conferenceAcronmym } = await request.json();
 
         console.log(authorEmails)
 
@@ -61,9 +61,9 @@ export async function PATCH(request: Request) {
             );
         }
 
-        const updatePaperStatus= await PaperModel.findOneAndUpdate(
-            {paperID},
-            {paperStatus:status}
+        const updatePaperStatus = await PaperModel.findOneAndUpdate(
+            { paperID },
+            { paperStatus: status }
         )
         console.log(updatePaperStatus)
 
@@ -76,26 +76,38 @@ export async function PATCH(request: Request) {
                 { status: 404 }
             );
         }
-        
-        const  paperReview1=updatePaperStatus.paperReview1History[updatePaperStatus.paperReview1History.length-1]
-        const paperReview2=updatePaperStatus.paperReview2History[updatePaperStatus.paperReview2History.length-1]
-        console.log(paperReview1,paperReview2)
-        const emailResponse=await sendCommentMail(
+        // Define the type for the comments object
+        type CommentsObject = {
+            [key: string]: string;
+        };
+
+        // Extract comments from the reviewers array
+        const comments = updatePaperStatus.reviewers.reduce<CommentsObject>((acc, reviewer, index) => {
+            if (reviewer.comments) {
+                acc[`review ${index + 1}`] = reviewer.comments;
+            }
+            return acc;
+        }, {});
+
+
+        // Log the collected comments for debugging
+        console.log("Collected Comments:", comments);
+
+        // Send email with the comments and other necessary details
+        const emailResponse = await sendCommentMail(
             authorEmails,
             paperID,
             status,
             conferenceAcronmym,
             comment,
-            paperReview1,
-            paperReview2
-        )
-
-        if(!emailResponse.success){
+            comments // Pass the key-value pair of reviewer comments
+        );
+        if (!emailResponse.success) {
             return Response.json({
-                success:false,
-                message:emailResponse.message
-            },{
-                status:500
+                success: false,
+                message: emailResponse.message
+            }, {
+                status: 500
             })
         }
 
@@ -106,9 +118,8 @@ export async function PATCH(request: Request) {
             }),
             { status: 200 }
         );
-
+        
     } catch (error) {
-        console.log("An unexpected error occurred: ", error);
         return new Response(
             JSON.stringify({
                 success: false,
