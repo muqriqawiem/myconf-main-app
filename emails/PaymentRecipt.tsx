@@ -38,7 +38,7 @@ import {
               Hello {recipientName},
             </Text>
             <Text style={paragraph}>
-              Thank you for your payment. We have successfully received ₹{amount} as a security deposit.
+              Thank you for your payment. We have successfully received RM{amount} as a security deposit.
             </Text>
             <Text style={paragraph}>
               <strong>Transaction ID:</strong> {transactionId}
