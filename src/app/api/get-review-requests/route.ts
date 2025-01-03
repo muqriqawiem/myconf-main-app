@@ -4,6 +4,9 @@ import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import PaperModel from "@/model/PaperSchema";
 
+// explicitly opt out of static rendering
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
     try {
         // Retrieve the user session

@@ -29,7 +29,19 @@ export async function POST(req: NextRequest) {
     const { origin } = req.nextUrl; // Get the origin from the request
     const UserConferences=await ConferenceModel.find({
       conferenceOrganizer:user._id,conferenceSecurityDeposit2000Paid:false
-    })
+    });
+
+    //check if the user has any unpaid conferences
+    if(UserConferences.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'You must create a conference before proceeding with the payment.',
+        },
+        { status: 400}
+      );
+    }
+
     // const body = await req.json(); // Parse the JSON body
 
 //     const customer=await stripe.customers.create({
@@ -84,7 +96,13 @@ export async function POST(req: NextRequest) {
     
     return NextResponse.json({ id: session.id });
   } catch (err: any) {
-    console.log(err)
-    return NextResponse.json(err.message, { status: err.statusCode || 500 });
+    console.log('Stripe error:',err);
+    return NextResponse.json(
+      {
+        success: false,
+        message: err.message || 'Failed to create checkout session.',
+      },
+      { status: err.statusCode || 500 }
+    );
   }
 }
