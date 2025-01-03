@@ -43,7 +43,7 @@ export const ReviewerNotificationEmail = ({
                 </Text>
 
                 <Text style={cta}>
-                    <a href="https://adroidcms.com/dashboard" style={ctaLink}>
+                    <a href="https://myconf.com/dashboard" style={ctaLink}>
                         Review Now
                     </a>
                 </Text>
@@ -55,7 +55,7 @@ export const ReviewerNotificationEmail = ({
                 </Text>
             </Container>
 
-            <Text style={footer}>Powered securely by AdroidCMS</Text>
+            <Text style={footer}>Powered securely by MYCONG</Text>
         </Body>
     </Html>
 );
