@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react"; //Add useEffect
 import {
   Table,
   TableBody,
@@ -27,7 +27,16 @@ import { Toggle } from "@/components/ui/toggle";
 const OrganizedConferenceComponent = () => {
   const { data: organizedConferences, isLoading } = useGetOrganizedConferencesQuery();
   const params = useParams();
-  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+
+  //Use state to store the baseURL
+  const [baseUrl, setBaseUrl] = useState('');
+
+  //UseEffect to set the baseURL after the component mounts
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setBaseUrl(`${window.location.protocol}//${window.location.host}`);
+    }
+  }, []);
 
   return (
     <div className='flex justify-center'>

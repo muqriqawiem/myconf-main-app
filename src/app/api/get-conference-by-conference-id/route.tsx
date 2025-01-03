@@ -3,6 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import ConferenceModel from "@/model/Conference";
 
+// explicitly opt out of static rendering
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
     await dbConnect();
     try {

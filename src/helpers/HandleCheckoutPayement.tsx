@@ -4,7 +4,7 @@
 
 //     const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || "");
 //     const stripe = await stripePromise;
-  
+
 //     try {
 //       const response = await fetch('/api/checkout_sessions', {
 //         method: 'POST',
@@ -13,13 +13,13 @@
 //         },
 //       });
 //       const session = await response.json();
-      
-    
+
+
 //       if (stripe) {
 //         const { error } = await stripe.redirectToCheckout({
 //           sessionId: session.id,
 //         });
-    
+
 //         if (error) {
 //           console.error('Stripe checkout error:', error);
 //         }
@@ -56,10 +56,16 @@ export const handleCheckoutPayment = async (event: React.MouseEvent<HTMLButtonEl
       headers: { 'Content-Type': 'application/json' },
     });
 
-if (!response.ok) {
-  console.error('Failed to create checkout session:', response.statusText);
-  return { error: 'Failed to initiate payment. Please log in or sign up and try again.' };
-}
+    if (!response.ok) {
+      const errorData = await response.json();
+
+      // Check for the specific error message from the backend
+      if (errorData.message === 'You must create a conference before proceeding with the payment.') {
+        return { error: 'You must create a conference before proceeding with the payment.' };
+      } else {
+        return { error: 'Failed to initiate payment. Please try again.' };
+      }
+    }
 
     const session = await response.json();
 

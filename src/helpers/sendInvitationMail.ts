@@ -17,7 +17,7 @@ export async function sendInvitationMail(
         );
 
         await sgMail.send({
-            from: "u2000778@siswa.um.edu.my",
+            from: "u2000726@siswa.um.edu.my",
             to: recipientEmail,
             subject: "Conference Invitation",
             html: emailHtmlContent,
