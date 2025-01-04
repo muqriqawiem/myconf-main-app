@@ -20,7 +20,7 @@ export const sendContactUsMail = async (email: string, name: string, message: st
     // Send email using SendGrid
     await sgMail.send({
       from:'customer@adroidcms.com',
-      to: 'support@adroidcms.com', // This is the support team's email
+      to: 'u2000726@siswa.um.edu.my', // This is the support team's email
       subject: 'Query From MYCONF web platform',
       html: emailContent,
     });
