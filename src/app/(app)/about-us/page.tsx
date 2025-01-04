@@ -14,7 +14,7 @@ const AboutUs = () => {
       <header className="text-center mb-10">
         <h1 className="text-4xl font-bold text-gray-900">About Us</h1>
         <p className="mt-4 text-lg text-gray-600">
-          Welcome to Adroid CMT, your premier Conference Management Tool!
+          Welcome to MYCONF – Your Conference Management Solution!
         </p>
       </header>
 
@@ -22,7 +22,7 @@ const AboutUs = () => {
       <section className="mb-10 bg-gray-50 p-6 rounded-lg shadow-md">
         <h2 className="text-3xl font-semibold text-gray-800">Our Mission</h2>
         <p className="mt-4 text-gray-700">
-          At Adroid CMT, our mission is to streamline the conference management process for organizers and participants alike. We aim to create a user-friendly platform that enhances collaboration, efficiency, and engagement within the academic and professional community.
+          At MYCONF, we make conference management easy for organizers and attendees. Our platform is designed to boost collaboration, streamline tasks, and create meaningful connections in academic and professional communities.
         </p>
       </section>
 
@@ -47,13 +47,13 @@ const AboutUs = () => {
 
 
       {/* Call to Action */}
-      <div className="text-center">
+      {/* <div className="text-center">
         <Link href="/contact-us">
           <Button className="bg-blue-600 text-white hover:bg-blue-700">
             Get in Touch
           </Button>
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 };
