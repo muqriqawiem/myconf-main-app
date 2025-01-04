@@ -62,7 +62,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { FaTools, FaFileAlt, FaSearch, FaChartLine, FaClipboardList, FaLock, FaUsersCog, FaEnvelope, FaRegBell } from "react-icons/fa";
+import { FaTools, FaFileAlt, FaSearch, FaChartLine, FaClipboardList, FaLock, FaUsersCog, FaEnvelope, FaRegBell, FaCalendarAlt } from "react-icons/fa";
 
 const features = [
   {
@@ -89,6 +89,11 @@ const features = [
     title: "Dynamic Dashboard",
     description: "Access a comprehensive overview of all activities, including conferences you're organizing and papers you've submitted. The dynamic dashboard provides real-time updates on submission statuses, upcoming deadlines, and review progress, keeping you informed at all times.",
     icon: <FaChartLine size={40} className="text-yellow-600" />,
+  },
+  {
+    title: "Session Scheduling",
+    description: "Plan and organize conference sessions effortlessly. Assign papers to sessions, update session details, and manage schedules to ensure a seamless conference experience.",
+    icon: <FaCalendarAlt size={40} className="text-cyan-600" />,
   },
   // {
   //   title: "Secure User Authentication",

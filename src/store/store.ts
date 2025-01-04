@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { ConferenceApiSlice } from './features/ConferenceApiSlice'
+import { SessionApiSlice } from './features/SessionApiSlice';
 import { PaperApiSlice } from './features/PaperApiSlice'
 import { ConferenceDashboardPaperSlice } from './features/ConferenceDashboardPaperSlice'
 
@@ -8,11 +9,12 @@ export const makeStore = () => {
     reducer: {
       // Add the generated reducer as a specific top-level slice
     [ConferenceApiSlice.reducerPath]: ConferenceApiSlice.reducer,
+    [SessionApiSlice.reducerPath]: SessionApiSlice.reducer,
     [PaperApiSlice.reducerPath]: PaperApiSlice.reducer,
     [ConferenceDashboardPaperSlice.reducerPath]:ConferenceDashboardPaperSlice.reducer
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(ConferenceApiSlice.middleware,PaperApiSlice.middleware,ConferenceDashboardPaperSlice.middleware),
+      getDefaultMiddleware().concat(ConferenceApiSlice.middleware,SessionApiSlice.middleware,PaperApiSlice.middleware,ConferenceDashboardPaperSlice.middleware),
   })
 }
 
