@@ -164,6 +164,9 @@ function Navbar() {
                 <Link href="/create-conference">
                   <Button variant={'default'}>Create Conference</Button>
                 </Link>
+                <Link href="/create-session">
+                  <Button variant={'default'}>Create Session</Button>
+                </Link>
                 <Link href="/dashboard">
                   <Button className="w-full md:w-auto bg-slate-100 text-black" variant="outline">
                     Dashboard

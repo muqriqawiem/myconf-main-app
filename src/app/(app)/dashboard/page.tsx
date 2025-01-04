@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useGetOrganizedConferencesQuery } from "@/store/features/ConferenceApiSlice";
+import { useGetOrganizedSessionsQuery } from "@/store/features/SessionApiSlice";
 import { useGetSubmittedPapersQuery } from "@/store/features/PaperApiSlice";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PulseLoader } from "react-spinners";
@@ -96,6 +97,56 @@ const OrganizedConferenceComponent = () => {
   );
 };
 
+// Organized Sessions Component
+const OrganizedSessionComponent = () => {
+  const { data: organizedSessions, isLoading } = useGetOrganizedSessionsQuery(); // Fetch organized sessions
+  const params = useParams();
+
+  return (
+    <div className='flex justify-center'>
+      <Card className='w-full border border-gray-200'>
+        <CardHeader>
+          <CardTitle>Organized Sessions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Session Name</TableHead>
+                <TableHead>Created At</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow className="w-full justify-center items-center text-center">
+                  <TableCell colSpan={3}><span className="">Loading <PulseLoader className="inline-block" size={6} /></span></TableCell>
+                </TableRow>
+              ) : organizedSessions && organizedSessions.length > 0 ? (
+                organizedSessions.map((organizedSession: any) => (
+                  <TableRow key={organizedSession._id}>
+                    <TableCell className="font-medium">{organizedSession.title}</TableCell>
+                    <TableCell>{moment(organizedSession.createdAt).calendar()}</TableCell>
+                    <TableCell>
+                      <Link href={`/edit-session?id=${organizedSession._id}`}>
+                        <Button variant="outline">Edit Session</Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3}>No organized sessions found</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 // Submitted Papers Component
 const SubmittedPaperComponent = () => {
   const { data: submittedPapers, isLoading } = useGetSubmittedPapersQuery();
@@ -163,7 +214,7 @@ const SubmittedPaperComponent = () => {
 // Main Page
 const Page: React.FC = () => {
   const [role, setRole] = useState<'Conference Chair' | 'Author'>('Conference Chair');
-  const [activeTab, setActiveTab] = useState<'organized' | 'submitted' | 'reviewManagement'>('organized');
+  const [activeTab, setActiveTab] = useState<'organized' | 'submitted' | 'reviewManagement' | 'organizedSessions'>('organized');
 
   const handleToggle = () => {
     const newRole = role === 'Conference Chair' ? 'Author' : 'Conference Chair';
@@ -174,7 +225,7 @@ const Page: React.FC = () => {
 
   // Explicitly type the onValueChange function to accept a string
   const handleTabChange = (value: string) => {
-    if (value === 'organized' || value === 'submitted' || value === 'reviewManagement') {
+    if (value === 'organized' || value === 'submitted' || value === 'reviewManagement' || value === 'organizedSessions') {
       setActiveTab(value);
     }
   };
@@ -230,6 +281,14 @@ const Page: React.FC = () => {
                 Review Management
               </TabsTrigger>
             )}
+            {role === 'Conference Chair' && (
+              <TabsTrigger
+                value="organizedSessions"
+                className="flex-1 text-center text-base font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
+              >
+                Organized Sessions
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {role === 'Conference Chair' && (
@@ -245,6 +304,11 @@ const Page: React.FC = () => {
           {role === 'Conference Chair' && (
             <TabsContent value="reviewManagement" className="p-4"> {/* Adjusted padding */}
               <ReviewedPapersComponent />
+            </TabsContent>
+          )}
+          {role === 'Conference Chair' && (
+            <TabsContent value="organizedSessions" className="p-4">
+              <OrganizedSessionComponent />
             </TabsContent>
           )}
         </Tabs>
