@@ -16,6 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import { VscAccount } from "react-icons/vsc";
+import Link from "next/link"; //import link component
 
 import { Button } from "@/components/ui/button";
 import {
@@ -73,25 +74,32 @@ export function Account({ fullname, email }: User) {
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            {/* Non-clickable Username */}
+            <DropdownMenuLabel className="flex items-center">
               <User className="mr-2 h-4 w-4" />
               <span>{fullname}</span>
-              <DropdownMenuShortcut></DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
+            </DropdownMenuLabel>
+            {/* Non-clickable Email */}
+            <DropdownMenuLabel className="flex items-center">
               <Mail className="mr-2 h-4 w-4" />
               <span className="truncate w-full">{email}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
+            </DropdownMenuLabel>
+            {/* Clickable Settings Page */}
+            <Link href="/settings">
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Profile Settings</span>
+              </DropdownMenuItem>
+            </Link>
+            {/* Billing - Uncomment to display */}
+            {/* <DropdownMenuItem>
               <CreditCard className="mr-2 h-4 w-4" />
               <span>Billing</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
+
+          {/* Logout Button */}
           <DropdownMenuItem
             onClick={handleLogout} // Open the dialog on click
             onMouseEnter={() => setIsHover(true)}
