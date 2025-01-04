@@ -102,7 +102,7 @@ export default function SettingsPage() {
             });
             const data = await response.json();
             if (response.ok) {
-                toast({ title: "Success", description: data.message });
+                toast({ title: "Success",description: data.message, variant: "default", className: "bg-green-500 text-white" });
             } else {
                 toast({ title: "Error", description: data.error, variant: "destructive" });
             }
@@ -126,7 +126,7 @@ export default function SettingsPage() {
             });
             const data = await response.json();
             if (response.ok) {
-                toast({ title: "Success", description: data.message });
+                toast({ title: "Success", description: data.message, variant: "default", className: "bg-green-500 text-white" });
                 passwordForm.reset();
             } else {
                 toast({ title: "Error", description: data.error, variant: "destructive" });
