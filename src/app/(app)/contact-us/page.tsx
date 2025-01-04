@@ -263,8 +263,8 @@ const ContactUsPage = () => {
               <h3 className="text-lg font-semibold">Email Support</h3>
             </div>
             <p className="mt-2 text-gray-600">Reach out to us via email at:</p>
-            <Link href="mailto:support@adroidcms.com" className="mt-1 font-bold text-blue-500">
-              support@adroidcms.com
+            <Link href="mailto:support@myconf.com" className="mt-1 font-bold text-blue-500">
+              support@myconf.com
             </Link>
           </div>
         </div>

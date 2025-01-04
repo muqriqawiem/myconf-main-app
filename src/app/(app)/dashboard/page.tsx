@@ -40,7 +40,7 @@ const OrganizedConferenceComponent = () => {
 
   return (
     <div className='flex justify-center'>
-      <Card className='w-full md:w-3/4 border border-gray-200'> {/* Added border and removed shadow */}
+      <Card className='w-full border border-gray-200'> {/* Added border and removed shadow */}
         <CardHeader>
           <CardTitle>Organized Conferences</CardTitle>
         </CardHeader>
@@ -102,7 +102,7 @@ const SubmittedPaperComponent = () => {
 
   return (
     <div className='flex justify-center items-start'>
-      <Card className='w-full md:w-3/4 border border-gray-200'> {/* Added border and removed shadow */}
+      <Card className='w-full border border-gray-200'> {/* Added border and removed shadow */}
         <CardHeader>
           <CardTitle>Submitted Papers</CardTitle>
         </CardHeader>
@@ -203,13 +203,13 @@ const Page: React.FC = () => {
           </Toggle>
         </div>
       </div>
-      <div className="bg-white rounded-lg p-6 border border-gray-200"> {/* Added border and removed shadow */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-lg">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="flex justify-center gap-6 mb-8">
             {role === 'Conference Chair' && (
               <TabsTrigger
                 value="organized"
-                className="px-6 py-3 text-lg font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
+                className="flex-1 text-center text-base font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
               >
                 Organized Conferences
               </TabsTrigger>
@@ -217,7 +217,7 @@ const Page: React.FC = () => {
             {role === 'Author' && (
               <TabsTrigger
                 value="submitted"
-                className="px-6 py-3 text-lg font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
+                className="flex-1 text-center text-base font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
               >
                 Submitted Papers
               </TabsTrigger>
@@ -225,7 +225,7 @@ const Page: React.FC = () => {
             {role === 'Conference Chair' && (
               <TabsTrigger
                 value="reviewManagement"
-                className="px-6 py-3 text-lg font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
+                className="flex-1 text-center text-base font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
               >
                 Review Management
               </TabsTrigger>
