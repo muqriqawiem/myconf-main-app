@@ -172,7 +172,7 @@ export default function PaperSubmissionForm() {
             <div>
               <div>
                 <FormLabel className='mb-2'>Authors</FormLabel>
-                <Input readOnly value={user?.email} className="bg-gray-200 mb-4" />
+                <Input readOnly value={user?.fullname} className="bg-gray-200 mb-4" />
               </div>
 
               {fields.map((field, index) => (
@@ -183,8 +183,8 @@ export default function PaperSubmissionForm() {
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <Input {...field} placeholder="Enter author email" />
+                        <FormLabel>Name</FormLabel>
+                        <Input {...field} placeholder="Enter author name" />
                         <FormMessage />
                       </FormItem>
                     )}
