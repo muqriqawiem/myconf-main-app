@@ -75,11 +75,11 @@ const PricingPage: React.FC = () => {
           Start with <span className="font-extrabold text-blue-700">100 papers for free.</span>
         </p>
         <ul className="list-disc list-inside text-left inline-block space-y-3">
-          <li>Once you exceed the 100 paper limit, submit $50 to our platform.</li>
-          <li>Add as many papers as you need after payment.</li>
-          <li>After the conference ends, our system will generate an invoice.</li>
-          <li>Invoice is based on the number of papers submitted and our price slabs. (Given Below)</li>
-          <li>Invoice will be sent to your Email ID.</li>
+          <li>Once you exceed the 100 paper limit, pay $50 upfront to continue submitting papers.</li>
+          <li>This $50 is a security deposit and will be deducted from the final invoice.</li>
+          <li>After the conference ends, our system will calculate the total cost based on the number of papers submitted and the pricing slabs. (Given Below)</li>
+          <li>The $50 security deposit will be substracted from the total invoice amount.</li>
+          <li>Invoice will be sent to the user via email.</li>
         </ul>
       </div>
       <div className="text-center mt-10">
