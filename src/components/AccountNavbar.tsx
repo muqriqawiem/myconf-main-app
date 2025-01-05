@@ -84,7 +84,16 @@ export function Account({ fullname, email }: User) {
               <Mail className="mr-2 h-4 w-4" />
               <span className="truncate w-full">{email}</span>
             </DropdownMenuLabel>
-            {/* Clickable Settings Page */}
+
+            {/* Payment History Button */}
+            <Link href="/payment-history">
+              <DropdownMenuItem>
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Payment History</span>
+              </DropdownMenuItem>
+            </Link>
+
+            {/* Profile Settings Button */}
             <Link href="/settings">
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />

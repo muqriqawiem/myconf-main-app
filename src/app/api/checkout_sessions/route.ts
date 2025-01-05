@@ -88,6 +88,9 @@ export async function POST(req: NextRequest) {
     // Create the Stripe Checkout session
     const stripeSession = await stripe.checkout.sessions.create(sessionParams);
 
+    //log the creation of the payment
+    console.log('Creating payment for stripePaymentId: ', stripeSession.id);
+
     // Save payment details to the payment collection
     const selectedConferenceId = stripeSession.custom_fields?.find(
       (field) => field.key === 'conferenceSelection'
@@ -99,6 +102,23 @@ export async function POST(req: NextRequest) {
         throw new Error('Invalid Conference ID');
       }
 
+      //check if a payment with the same stripePaymentId already exists
+      const existingPayment = await PaymentModel.findOne({
+        stripePaymentId: stripeSession.id,
+      });
+
+      if (existingPayment) {
+        console.log('Payment already exists: ', existingPayment);
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'Payment already exists',
+          },
+          { status: 400 }
+        );
+      }
+
+      //create a new payment
       const payment = await PaymentModel.create({
         conferenceId: selectedConferenceId,
         userId: user._id?.toString(),
