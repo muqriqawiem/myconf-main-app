@@ -4,6 +4,8 @@ import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import PaperModel from "@/model/PaperSchema";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     try {
         // Retrieve the user session

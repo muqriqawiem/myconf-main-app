@@ -6,7 +6,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 // Initialize Stripe with the secret key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+  apiVersion: '2024-06-20', // Ensure you're using the latest API version
+});
+
+// Use the new Route Segment Config to disable body parsing
+export const dynamic = 'force-dynamic'; // Ensure the route is dynamically rendered
+export const fetchCache = 'force-no-store'; // Disable caching
+export const runtime = 'nodejs'; // Ensure the route runs in the Node.js runtime
 
 export async function POST(req: NextRequest) {
   await dbConnect();
@@ -15,8 +22,9 @@ export async function POST(req: NextRequest) {
   let event;
 
   try {
-    // Read the raw body
-    const rawBody = await req.text(); // You need the raw body for the signature check
+    // Read the raw body from the request
+    const rawBody = await getRawBody(req);
+
     // Verify the event by constructing it using the raw body and Stripe's signature
     event = stripe.webhooks.constructEvent(
       rawBody,
@@ -25,7 +33,10 @@ export async function POST(req: NextRequest) {
     );
   } catch (err: any) {
     console.error('⚠️ Webhook signature verification failed.', err.message);
-    return NextResponse.json({ message: `Webhook Error: ${err.message}`, success: false }, { status: 400 });
+    return NextResponse.json(
+      { message: `Webhook Error: ${err.message}`, success: false },
+      { status: 400 }
+    );
   }
 
   console.log('Webhook received: ', event.type);
@@ -40,10 +51,6 @@ export async function POST(req: NextRequest) {
       await fulfillOrder(session);
       break;
 
-    // case 'payment_intent.succeeded':
-    //   const paymentIntent = event.data.object as Stripe.PaymentIntent;
-    //   console.log('Payment intent succeeded:', paymentIntent);
-    //   break;
     case 'checkout.session.async_payment_failed':
       const failedSession = event.data.object as Stripe.Checkout.Session;
       console.log('Payment failed for session ID: ', failedSession.id);
@@ -66,7 +73,7 @@ export async function POST(req: NextRequest) {
 async function fulfillOrder(session: Stripe.Checkout.Session) {
   console.log('Fulfilling order for session ID: ', session.id);
 
-  //get the selected conference ID from the custom fields
+  // Get the selected conference ID from the custom fields
   const selectedConferenceId = session.custom_fields?.find(
     (field) => field.key === 'conferenceSelection'
   )?.dropdown?.value;
@@ -79,12 +86,12 @@ async function fulfillOrder(session: Stripe.Checkout.Session) {
   }
 
   try {
-    //validate selectedConferenceId
+    // Validate selectedConferenceId
     if (!mongoose.Types.ObjectId.isValid(selectedConferenceId)) {
       throw new Error('Invalid conference ID');
     }
 
-    //update conference collection to mark the security deposit as paid
+    // Update conference collection to mark the security deposit as paid
     console.log('Updating Conference: ', selectedConferenceId);
     await ConferenceModel.updateOne(
       { _id: selectedConferenceId },
@@ -92,13 +99,12 @@ async function fulfillOrder(session: Stripe.Checkout.Session) {
     );
     console.log('Conference updated successfully: ', selectedConferenceId);
 
-    //create a new payment document in the Payment collection
+    // Create a new payment document in the Payment collection
     console.log('Creating Payment: ', session.id);
     const payment = await PaymentModel.create({
       conferenceId: selectedConferenceId,
       userId: session.metadata?.userId || 'unknown',
       amount: session.amount_total ? session.amount_total / 100 : 0,
-      // currency: session.currency || 'usd',
       paymentType: 'upfront',
       status: 'paid',
       stripePaymentId: session.id,
@@ -107,4 +113,20 @@ async function fulfillOrder(session: Stripe.Checkout.Session) {
   } catch (err: any) {
     console.error('Error fulfilling order: ', err.message);
   }
+}
+
+// Helper function to read the raw body from the request
+async function getRawBody(req: NextRequest): Promise<Buffer> {
+  const chunks: Uint8Array[] = [];
+  const reader = req.body?.getReader();
+
+  if (reader) {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+  }
+
+  return Buffer.concat(chunks);
 }

@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import ConferenceModel from "@/model/Conference";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
     await dbConnect();
 
