@@ -52,6 +52,7 @@ const PaymentSchema: Schema<IPayment> = new Schema(
         stripePaymentId: {
             type: String,
             required: true,
+            unique: true,
         },
         invoiceUrl: {
             type: String,
