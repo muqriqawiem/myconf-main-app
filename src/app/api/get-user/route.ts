@@ -1,8 +1,10 @@
-// src/api/get-user/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import UserModel from "@/model/User";
 import { authOptions } from '../auth/[...nextauth]/options';
+
+// Explicitly opt out of static rendering
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
     const session = await getServerSession(authOptions);
@@ -20,7 +22,11 @@ export async function GET() {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        return NextResponse.json(user);
+        return NextResponse.json(user, {
+            headers: {
+                'Cache-Control': 'no-store, max-age=0', // Disable caching
+            },
+        });
     } catch (error) {
         console.error("Error fetching user data:", error);
         return NextResponse.json(
