@@ -3,6 +3,9 @@ import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import PaperModel from "@/model/PaperSchema";
 
+// Explicitly opt out of static rendering
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
     await dbConnect();
 
@@ -20,17 +23,26 @@ export async function GET(request: Request) {
     }
 
     try {
-        const submittedPapers = await PaperModel.find({$or:[{paperAuthor: user._id},{correspondingAuthor:user._id}]}).populate("conference","conferenceAcronym").populate('paperAuthor').populate('correspondingAuthor');
-        
+        const submittedPapers = await PaperModel.find({
+            $or: [{ paperAuthor: user._id }, { correspondingAuthor: user._id }],
+        })
+            .populate("conference", "conferenceAcronym")
+            .populate('paperAuthor')
+            .populate('correspondingAuthor');
+
         return new Response(
             JSON.stringify({
                 success: true,
-                message: submittedPapers.length > 0 ? "Organized conferences found" : "No organized conferences found",
+                message: submittedPapers.length > 0 ? "Submitted papers found" : "No submitted papers found",
                 data: { submittedPapers },
             }),
-            { status: 200 }
+            {
+                status: 200,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0', // Disable caching
+                },
+            }
         );
-        
     } catch (error) {
         console.log("An unexpected error occurred: ", error);
         return new Response(

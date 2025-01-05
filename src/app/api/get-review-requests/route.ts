@@ -4,7 +4,7 @@ import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import PaperModel from "@/model/PaperSchema";
 
-// explicitly opt out of static rendering
+// Explicitly opt out of static rendering
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
@@ -44,8 +44,7 @@ export async function GET(request: NextRequest) {
                     model: "User", // Ensure the model name matches exactly
                     select: "fullname email", // Fetch specific fields
                 },
-            ])
-        console.log(papers)
+            ]);
 
         // If no papers found with pending review requests
         if (!papers || papers.length === 0) {
@@ -55,7 +54,12 @@ export async function GET(request: NextRequest) {
                     message: "No pending review requests found.",
                     requests: [],
                 },
-                { status: 200 }
+                {
+                    status: 200,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0', // Disable caching
+                    },
+                }
             );
         }
 
@@ -65,32 +69,26 @@ export async function GET(request: NextRequest) {
             paperTitle: paper.paperTitle,
             reviewRequests: paper.reviewRequests.filter((req) => (
                 req.reviewerId && req.reviewerId._id.toString() === user._id && req.status === "pending"
-            ))
-            // .map((req) => ({
-            //   requestId: req._id,
-            //   requestedBy: {
-            //     id: req.requestedBy?._id,
-            //     name: req.requestedBy?.fullname,
-            //     email: req.requestedBy?.email,
-            //   },
-            //   requestedAt: req.requestedAt,
-            // })),
+            )),
         }));
 
-        // Check for papers with non empty review requests
+        // Check for papers with non-empty review requests
         const actualRequests = formattedRequests.filter(
             (req) => req.reviewRequests.length != 0
         );
 
-        console.log(actualRequests)
         return NextResponse.json(
             {
                 success: true,
                 message: "Pending review requests retrieved successfully.",
-                
                 requests: actualRequests,
             },
-            { status: 200 }
+            {
+                status: 200,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0', // Disable caching
+                },
+            }
         );
     } catch (error: any) {
         console.error("Error fetching review requests:", error);

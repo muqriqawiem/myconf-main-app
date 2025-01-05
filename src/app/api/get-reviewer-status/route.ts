@@ -4,6 +4,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import UserModel from "@/model/User";
 
+// Explicitly opt out of static rendering
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
     await dbConnect();
     const session = await getServerSession(authOptions);
@@ -33,10 +36,17 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        return NextResponse.json({
-            success: true,
-            isReviewer: user.isReviewer,
-        });
+        return NextResponse.json(
+            {
+                success: true,
+                isReviewer: user.isReviewer,
+            },
+            {
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0', // Disable caching
+                },
+            }
+        );
     } catch (error: any) {
         return NextResponse.json(
             {

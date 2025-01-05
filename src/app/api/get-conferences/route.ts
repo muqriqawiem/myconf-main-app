@@ -3,6 +3,9 @@ import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import ConferenceModel from "@/model/Conference";
 
+// Explicitly opt out of static rendering
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
     await dbConnect();
 
@@ -30,7 +33,12 @@ export async function GET(request: Request) {
                 message: organizedConferences.length > 0 ? "Organized conferences found" : "No organized conferences found",
                 data: { organizedConferences },
             }),
-            { status: 200 }
+            {
+                status: 200,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0', // Disable caching
+                },
+            }
         );
     } catch (error) {
         console.log("An unexpected error occurred: ", error);
