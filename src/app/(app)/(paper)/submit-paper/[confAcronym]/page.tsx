@@ -22,6 +22,8 @@ import moment from 'moment';
 import Link from 'next/link';
 import Loader from '@/components/Loader';
 
+export const dynamic = 'force-dynamic'
+
 export default function PaperSubmissionForm() {
   const { data: session } = useSession();
   const user: User = session?.user;

@@ -3,8 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import ConferenceModel from "@/model/Conference";
 
-// explicitly opt out of static rendering
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
     await dbConnect();
@@ -17,7 +15,7 @@ export async function GET(request: Request) {
         // Find the conference by the provided ID
         const getConferenceDetails = await ConferenceModel.findOne({
             conferenceID: queryParams.conferenceID
-        }).populate('conferenceOrganizer',"fullname");
+        }).populate('conferenceOrganizer', "fullname");
 
         if (!getConferenceDetails) {
             return new Response(
@@ -25,7 +23,13 @@ export async function GET(request: Request) {
                     success: false,
                     message: "Error occurred while fetching conference details",
                 }),
-                { status: 500 }
+                {
+                    status: 404,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
@@ -35,7 +39,13 @@ export async function GET(request: Request) {
                 message: "Conference details fetched successfully",
                 data: getConferenceDetails,
             }),
-            { status: 200 }
+            {
+                status: 200,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     } catch (error) {
         console.log("An unexpected error occurred: ", error);
@@ -44,7 +54,13 @@ export async function GET(request: Request) {
                 success: false,
                 message: "Error occurred while fetching conference details",
             }),
-            { status: 500 }
+            {
+                status: 500,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 }

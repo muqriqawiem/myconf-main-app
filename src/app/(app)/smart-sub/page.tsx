@@ -7,6 +7,8 @@ import { useGetAllAcceptedConferencesQuery } from '@/store/features/ConferenceAp
 import Loader from '@/components/Loader';
 import { IConference } from '@/model/Conference';
 
+export const dynamic = 'force-dynamic'
+
 const SmartSubPage = () => {
 
   const { data, error, isLoading } = useGetAllAcceptedConferencesQuery();

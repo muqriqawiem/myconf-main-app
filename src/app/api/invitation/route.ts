@@ -17,7 +17,13 @@ export async function POST(request: Request) {
                 success: false,
                 message: "Not Authenticated",
             }),
-            { status: 401 }
+            {
+                status: 401,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 
@@ -29,7 +35,13 @@ export async function POST(request: Request) {
                 success: false,
                 message: "Missing required fields",
             }),
-            { status: 400 }
+            {
+                status: 400,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 
@@ -58,7 +70,13 @@ export async function POST(request: Request) {
                     success: false,
                     message: emailResponse.message,
                 }),
-                { status: 500 }
+                {
+                    status: 500,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
@@ -67,7 +85,13 @@ export async function POST(request: Request) {
                 success: true,
                 message: "Invitation sent successfully",
             }),
-            { status: 201 }
+            {
+                status: 201,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     } catch (error) {
         console.error("Error creating invitation:", error);
@@ -76,7 +100,13 @@ export async function POST(request: Request) {
                 success: false,
                 message: "Error creating invitation",
             }),
-            { status: 500 }
+            {
+                status: 500,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 }

@@ -4,8 +4,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import UserModel from "@/model/User";
 
-// Explicitly opt out of static rendering
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
     await dbConnect();
@@ -17,7 +15,13 @@ export async function GET(request: NextRequest) {
                 success: false,
                 message: "Not Authenticated",
             },
-            { status: 401 }
+            {
+                status: 401,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 
@@ -32,7 +36,13 @@ export async function GET(request: NextRequest) {
                     success: false,
                     message: "User not found",
                 },
-                { status: 404 }
+                {
+                    status: 404,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
@@ -53,7 +63,13 @@ export async function GET(request: NextRequest) {
                 success: false,
                 message: error.message,
             },
-            { status: 500 }
+            {
+                status: 500,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 }

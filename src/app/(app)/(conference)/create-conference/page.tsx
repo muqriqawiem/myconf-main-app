@@ -31,6 +31,8 @@ import { useState } from 'react';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { useCreateNewConferenceMutation } from '@/store/features/ConferenceApiSlice';
 
+export const dynamic = 'force-dynamic'
+
 export default function CreateConferenceForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false)
