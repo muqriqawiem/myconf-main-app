@@ -4,7 +4,6 @@ import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import PaperModel from "@/model/PaperSchema";
 
-// Explicitly opt out of static rendering
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
@@ -20,7 +19,13 @@ export async function GET(request: NextRequest) {
                     success: false,
                     message: "Unauthorized access. Please log in to proceed.",
                 },
-                { status: 401 }
+                {
+                    status: 401,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
@@ -97,7 +102,13 @@ export async function GET(request: NextRequest) {
                 success: false,
                 message: error.message || "An unexpected error occurred.",
             },
-            { status: 500 }
+            {
+                status: 500,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 }

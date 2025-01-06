@@ -4,8 +4,6 @@ import { authOptions } from "../auth/[...nextauth]/options";
 import PaperModel from "@/model/PaperSchema";
 import ConferenceModel from "@/model/Conference";
 
-// Explicitly opt out of static rendering
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
     await dbConnect();
@@ -38,7 +36,13 @@ export async function GET(request: Request) {
                     success: false,
                     message: "Error occurred while fetching conference Details",
                 }),
-                { status: 500 }
+                {
+                    status: 500,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
@@ -84,7 +88,13 @@ export async function GET(request: Request) {
                 success: false,
                 message: "Error occurred while fetching papers for the conference",
             }),
-            { status: 500 }
+            {
+                status: 500,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 }

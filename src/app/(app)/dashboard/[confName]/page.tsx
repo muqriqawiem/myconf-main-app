@@ -9,6 +9,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useGetConferencePapersQuery } from '@/store/features/PaperApiSlice';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
+export const dynamic = 'force-dynamic'
+
 // UnderSubmission.tsx
 const UnderSubmission = () => (
     <div className='flex min-w-full min-h-[80vh] justify-center items-center'>

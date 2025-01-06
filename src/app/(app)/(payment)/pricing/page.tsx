@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import PricingCard from './pricingCard';
 import Link from 'next/link';
 import { Faqs } from './faqs';
-import PaymentButton from './PaymentButton';
 
 interface PricingPlan {
   title: string;
@@ -83,10 +82,6 @@ const PricingPage: React.FC = () => {
         </ul>
       </div>
       <div className="text-center mt-10">
-        {/* <Link href={"/payment-portal"}> */}
-          <PaymentButton/>
-          
-        {/* </Link> */}
     </div>  
 </div>
 

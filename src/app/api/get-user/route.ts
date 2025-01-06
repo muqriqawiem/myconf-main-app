@@ -31,7 +31,13 @@ export async function GET() {
         console.error("Error fetching user data:", error);
         return NextResponse.json(
             { error: "Failed to fetch user data" },
-            { status: 500 }
+            {
+                status: 500,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 }

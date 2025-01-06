@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import ConferenceModel from "@/model/Conference";
 
-export const dynamic = 'force-dynamic'; // disable static rendering
 
 export async function GET(request: Request) {
     await dbConnect();
@@ -36,7 +35,13 @@ export async function GET(request: Request) {
                     success: false,
                     message: "Conference Details not found",
                 }),
-                { status: 404 } // Use 404 for "not found" instead of 500
+                {
+                    status: 404,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                } // Use 404 for "not found" instead of 500
             );
         }
 
@@ -60,7 +65,13 @@ export async function GET(request: Request) {
                 success: false,
                 message: "Error occurred while fetching conference details",
             }),
-            { status: 500 }
+            {
+                status: 500,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 }
