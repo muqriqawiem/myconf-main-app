@@ -69,8 +69,9 @@ export const ConferenceApiSlice = createApi({
       },
     }),
     getConferenceByConferenceID: builder.query<IModifiedConference, string>({
-      query: (confName) => `/get-conference-by-conference-id?confName=${confName}`,
+      query: (conferenceAcronym) => `/get-conference-by-conference-id?conferenceAcronym=${conferenceAcronym}`,
       transformResponse: (response: ApiResponse<IModifiedConference>) => {
+        console.log("Raw Response from Backend:", response); // Debugging line
         if (response.success) {
           return response.data;
         } else {

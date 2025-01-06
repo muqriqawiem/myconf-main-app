@@ -9,12 +9,12 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const queryParams = {
-            conferenceID: searchParams.get('conferenceID'),
+            conferenceAcronym: searchParams.get('conferenceAcronym'),
         };
 
         // Find the conference by the provided ID
         const getConferenceDetails = await ConferenceModel.findOne({
-            conferenceID: queryParams.conferenceID
+            conferenceAcronym: queryParams.conferenceAcronym
         }).populate('conferenceOrganizer', "fullname");
 
         if (!getConferenceDetails) {

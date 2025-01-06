@@ -22,13 +22,20 @@ import { PaymentRequestButtonElement } from "@stripe/react-stripe-js";
 
 const ConferencePage = () => {
   const params = useParams();
+  console.log("Conference Acronym from URL:", params.confAcronym); // Debugging line
+
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const profileUrl = `${baseUrl}/submit-paper/${params.confAcronym}`;
   const invitationUrl = `${baseUrl}/send-invitation/`;
 
   const { data: conferenceDetails, error, isLoading } = useGetConferenceByConferenceIDQuery(
-    params.confAcronym as string
+    params.confAcronym as string,
+    {
+      refetchOnMountOrArgChange: true,
+    }
   );
+
+  console.log("Fetched Conference Details:", conferenceDetails); // Debugging line
 
   if (isLoading) {
     return <Loader />;
