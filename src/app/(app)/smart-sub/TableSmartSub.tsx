@@ -87,7 +87,7 @@ const TableSmartSub: React.FC<conferencesType> = ({ conferences }) => {
       cell: (info) => (
         <Button
           variant="outline"
-          onClick={() => router.push(`/smart-sub/${info.getValue()}`)}
+          onClick={() => router.push(`/smart-sub/${info.getValue<string>()}`)}
         >
           See Details
         </Button>
