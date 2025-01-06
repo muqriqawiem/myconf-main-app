@@ -54,7 +54,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ isPaid }) => {
       className={`px-10 py-4 bg-blue-600 text-white hover:bg-blue-300 ${isPaid ? "bg-green-700 text-white hover:bg-green-600 cursor-not-allowed" : ""}`} // Green background for paid state
       disabled={isPaid || loading} // Disable if already paid or loading
     >
-      {isPaid ? "Security Deposit Paid" : loading ? "Processing..." : "Pay $50"}
+      {isPaid ? "Security Deposit Paid" : loading ? "Processing..." : "Pay Security Deposit $50"}
     </Button>
   );
 };
