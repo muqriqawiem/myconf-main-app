@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import PaymentTable from './components/PaymentTable';
+import Loader from '@/components/Loader';
+
+export const dynamic = 'force-dynamic'
 
 export default function PaymentHistoryPage() {
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchPayments = async () => {
@@ -23,10 +27,10 @@ export default function PaymentHistoryPage() {
                 }
 
                 const data = await response.json();
-                console.log('Payments:', data.data.payments); // Log the payments array
                 setPayments(data.data.payments);
             } catch (error) {
                 console.error('Error fetching payments:', error);
+                setError('Failed to fetch payments. Please try again later.');
             } finally {
                 setLoading(false);
             }
@@ -36,7 +40,11 @@ export default function PaymentHistoryPage() {
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader />;
+    }
+
+    if (error) {
+        return <div className="container mx-auto p-4 text-red-500">{error}</div>;
     }
 
     return (

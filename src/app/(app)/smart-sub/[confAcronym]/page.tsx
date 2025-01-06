@@ -79,8 +79,8 @@ const ConferencePage = () => {
         <Table className="min-w-full">
           <TableBody>
             <TableRow>
-              <TableHead>Organizer</TableHead>
-              <TableCell className="font-medium">
+              {/* <TableHead>Organizer</TableHead> */}
+              {/* <TableCell className="font-medium">
                 <a
                   href={conferenceOrganizerWebPage}
                   target="_blank"
@@ -91,10 +91,10 @@ const ConferencePage = () => {
                 </a>{" "}
                 ({conferenceOrganizerRole})<br />
                 Phone: {conferenceOrganizerPhoneNumber}
-              </TableCell>
+              </TableCell> */}
             </TableRow>
             <TableRow>
-              <TableHead>Email</TableHead>
+              <TableHead>Organizer Email</TableHead>
               <TableCell className="font-medium">{conferenceEmail}</TableCell>
             </TableRow>
             <TableRow>

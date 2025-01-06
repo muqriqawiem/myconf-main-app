@@ -24,7 +24,13 @@ export async function POST(request: NextRequest) {
                     success: false,
                     message: "Unauthorized access. Please log in to proceed.",
                 },
-                { status: 401 }
+                {
+                    status: 401,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
@@ -36,7 +42,13 @@ export async function POST(request: NextRequest) {
                     success: false,
                     message: "Invalid action. Action must be 'accept' or 'reject'.",
                 },
-                { status: 400 }
+                {
+                    status: 400,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
@@ -46,7 +58,13 @@ export async function POST(request: NextRequest) {
                     success: false,
                     message: "Both paperId and reviewerId are required.",
                 },
-                { status: 400 }
+                {
+                    status: 400,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
@@ -61,7 +79,13 @@ export async function POST(request: NextRequest) {
         if (!paper) {
             return NextResponse.json(
                 { success: false, message: "Paper not found." },
-                { status: 404 }
+                {
+                    status: 404,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
@@ -78,14 +102,26 @@ export async function POST(request: NextRequest) {
         if (!request) {
             return NextResponse.json(
                 { success: false, message: "Review request not found." },
-                { status: 404 }
+                {
+                    status: 404,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
         if (request.reviewerId.toString() !== user._id) {
             return NextResponse.json(
                 { success: false, message: "You are not authorized to modify this request." },
-                { status: 403 }
+                {
+                    status: 403,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
         }
 
@@ -117,13 +153,25 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json(
             { success: true, message: `Request has been ${action}ed successfully.` },
-            { status: 200 }
+            {
+                status: 200,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     } catch (error: any) {
         console.error("Error processing review request action:", error);
         return NextResponse.json(
             { success: false, message: error.message || "An unexpected error occurred." },
-            { status: 500 }
+            {
+                status: 500,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 }

@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import Session from '@/model/Session';
 
-// Explicitly opt out of static rendering
-export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
@@ -15,7 +13,13 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     if (!session) {
       return NextResponse.json(
         { success: false, error: 'Session not found' },
-        { status: 404 }
+        {
+          status: 404,
+          headers: {
+            'Cache-Control': 'no-store, max-age=0',
+            'Content-Type': 'application/json',
+          },
+        }
       );
     }
 
@@ -31,12 +35,24 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     if (error instanceof Error) {
       return NextResponse.json(
         { success: false, error: error.message },
-        { status: 500 }
+        {
+          status: 500,
+          headers: {
+            'Cache-Control': 'no-store, max-age=0',
+            'Content-Type': 'application/json',
+          },
+        }
       );
     }
     return NextResponse.json(
       { success: false, error: 'An unknown error occurred' },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, max-age=0',
+          'Content-Type': 'application/json',
+        },
+      }
     );
   }
 }

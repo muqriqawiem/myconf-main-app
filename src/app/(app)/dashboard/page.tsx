@@ -24,6 +24,9 @@ import EditConferencePopup from "./EditConferencePopup";
 import { useParams } from 'next/navigation';
 import { Toggle } from "@/components/ui/toggle";
 import EditSessionPopup from "./EditSessionPopup";
+import PaymentButton from "../(payment)/pricing/PaymentButton";
+
+export const dynamic = 'force-dynamic'
 
 // Organized Conferences Component
 const OrganizedConferenceComponent = () => {
@@ -80,6 +83,7 @@ const OrganizedConferenceComponent = () => {
                             <Button variant={'outline'}>Send Invitation</Button>
                           </Link>
                           <EditConferencePopup conferenceDetails={organizedConference} />
+                          <PaymentButton isPaid={organizedConference.conferenceSecurityDeposit2000Paid}/>
                         </div>
                       </TableCell>
                     </TableRow>

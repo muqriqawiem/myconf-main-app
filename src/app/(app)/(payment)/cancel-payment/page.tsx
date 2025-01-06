@@ -4,23 +4,56 @@ import React from 'react';
 
 const PaymentCancel = () => {
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100 p-6">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-6">
       <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg text-center">
-        <h1 className="text-4xl font-bold text-red-500 mb-4">
-          Oops! <span className="text-4xl">😞</span>
+        {/* Heading with an icon */}
+        <div className="flex justify-center mb-6">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-16 w-16 text-red-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+
+        {/* Main heading */}
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">
+          Payment Canceled
         </h1>
-        <p className="text-lg text-gray-700 mb-4">
-          It looks like your payment was canceled. No worries, you can always try again.
-        </p>
-        <p className="text-sm text-gray-500 mb-6">
-          If you need any assistance or have questions, feel free to contact our support team.
+
+        {/* Subheading */}
+        <p className="text-lg text-gray-600 mb-4">
+          Your payment was not completed. You can try again or contact us if you need assistance.
         </p>
 
-        <Link href="/pricing">
-          <Button className="bg-red-500 text-white py-2 px-6 rounded-lg font-medium text-lg hover:bg-red-600 transition duration-300 ease-in-out">
-            Go Back
-          </Button>
-        </Link>
+        {/* Support message */}
+        <p className="text-sm text-gray-500 mb-6">
+          Need help? Email us at{' '}
+          <a
+            href="mailto:support@myconf.com"
+            className="text-blue-500 hover:underline"
+          >
+            support@myconf.com
+          </a>
+          .
+        </p>
+
+        {/* Action buttons */}
+        <div className="flex justify-center gap-4">
+          <Link href="/dashboard">
+            <Button variant="outline" className="px-6 py-2">
+              Go Back to Dashboard
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );

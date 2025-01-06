@@ -3,8 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import PaperModel from "@/model/PaperSchema";
 
-// Explicitly opt out of static rendering
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
     await dbConnect();
@@ -17,7 +15,13 @@ export async function GET(request: Request) {
                 success: false,
                 message: "Not Authenticated",
             }),
-            { status: 401 }
+            {
+                status: 401,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 
@@ -40,7 +44,13 @@ export async function GET(request: Request) {
                     message: "Paper Details not found",
                     data: null,
                 }),
-                { status: 404 } // Use 404 for "not found" instead of 500
+                {
+                    status: 404,
+                    headers: {
+                        'Cache-Control': 'no-store, max-age=0',
+                        'Content-Type': 'application/json',
+                    },
+                } // Use 404 for "not found" instead of 500
             );
         }
 
@@ -65,7 +75,13 @@ export async function GET(request: Request) {
                 message: "Error occurred while fetching paper details",
                 data: null,
             }),
-            { status: 500 }
+            {
+                status: 500,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 }

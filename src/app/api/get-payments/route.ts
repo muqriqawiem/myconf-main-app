@@ -4,7 +4,6 @@ import { authOptions } from "../auth/[...nextauth]/options";
 import PaymentModel from "@/model/Payment";
 import ConferenceModel from "@/model/Conference";
 
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
     await dbConnect();

@@ -3,8 +3,6 @@ import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import SessionModel from '@/model/Session';
 
-// Explicitly opt out of static rendering
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
     await dbConnect();
@@ -18,7 +16,13 @@ export async function GET(request: Request) {
                 success: false,
                 message: "Not Authenticated",
             }),
-            { status: 401 }
+            {
+                status: 401,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
     try {
@@ -46,7 +50,13 @@ export async function GET(request: Request) {
                 success: false,
                 message: "Error occurred while fetching organized sessions",
             }),
-            { status: 500 }
+            {
+                status: 500,
+                headers: {
+                    'Cache-Control': 'no-store, max-age=0',
+                    'Content-Type': 'application/json',
+                },
+            }
         );
     }
 }
