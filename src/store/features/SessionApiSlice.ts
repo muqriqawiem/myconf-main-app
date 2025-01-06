@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { z } from 'zod';
+import { ISession } from '@/model/Session';
 import { sessionSchema } from '@/schemas/sessionCreation';
 
 // Interfaces for organized sessions and API response
@@ -25,6 +26,10 @@ interface UpdateSessionType {
   sessionDetails: z.infer<typeof sessionSchema>;
 }
 
+type IModifiedSession = Omit<ISession, 'sessionOrganizer'> & {
+  conferenceOrganizer: {_id:string,fullname:string};
+};
+
 export const SessionApiSlice = createApi({
   reducerPath: 'sessionapi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
@@ -33,9 +38,9 @@ export const SessionApiSlice = createApi({
     // Fetch all organized sessions
     getOrganizedSessions: builder.query<OrganizedSession[], void>({
       query: () => `/get-organized-sessions`,
-      transformResponse: (response: ApiResponse<{ sessions: OrganizedSession[] }>) => {
+      transformResponse: (response: ApiResponse<{ organizedSessions: OrganizedSession[] }>) => {
         if (response.success) {
-          return response.data.sessions;
+          return response.data.organizedSessions;
         } else {
           throw new Error(response.message);
         }
@@ -64,9 +69,9 @@ export const SessionApiSlice = createApi({
     }),
 
     // Fetch a session by its ID
-    getSessionById: builder.query<OrganizedSession, string>({
+    getSessionById: builder.query<IModifiedSession, string>({
       query: (sessionId) => `/get-session/${sessionId}`,
-      transformResponse: (response: ApiResponse<OrganizedSession>) => {
+      transformResponse: (response: ApiResponse<IModifiedSession>) => {
         if (response.success) {
           return response.data;
         } else {

@@ -23,6 +23,7 @@ import EditPopup from './EditPopup';
 import EditConferencePopup from "./EditConferencePopup";
 import { useParams } from 'next/navigation';
 import { Toggle } from "@/components/ui/toggle";
+import EditSessionPopup from "./EditSessionPopup";
 
 // Organized Conferences Component
 const OrganizedConferenceComponent = () => {
@@ -128,9 +129,7 @@ const OrganizedSessionComponent = () => {
                     <TableCell className="font-medium">{organizedSession.title}</TableCell>
                     <TableCell>{moment(organizedSession.createdAt).calendar()}</TableCell>
                     <TableCell>
-                      <Link href={`/edit-session?id=${organizedSession._id}`}>
-                        <Button variant="outline">Edit Session</Button>
-                      </Link>
+                    <EditSessionPopup sessionDetails={organizedSession} />
                     </TableCell>
                   </TableRow>
                 ))
