@@ -34,32 +34,20 @@ export default function EditSessionClient() {
     const { toast } = useToast();
 
     useEffect(() => {
-        // Fetch session details by ID
         async function fetchSessionDetails() {
-            try {
-                const response = await fetch(`/api/get-session/${sessionId}`);
-                const data = await response.json();
-                if (data.success) {
-                    form.reset(data.session); // Prefill the form with session data
-                } else {
-                    throw new Error(data.error);
-                }
-            } catch (error: any) {
-                toast({
-                    title: 'Error',
-                    description: error.message || 'Failed to fetch session details.',
-                    variant: 'destructive',
-                });
-                router.push('/dashboard');
-            } finally {
-                setLoading(false);
+            const response = await fetch(`/api/get-session/${sessionId}`);
+            const data = await response.json();
+            if (data.success) {
+                form.reset(data.session); // Prefill the form with session data
+            } else {
+                throw new Error(data.error);
             }
         }
-
+    
         if (sessionId) {
             fetchSessionDetails();
         }
-    }, [sessionId, form, router, toast]);
+    }, [sessionId]);    
 
     const onSubmit = async (data: z.infer<typeof sessionSchema>) => {
         setIsSubmitting(true);

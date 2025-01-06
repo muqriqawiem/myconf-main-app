@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ISession extends Document {
+  sessionOrganizer: mongoose.Types.ObjectId;
   title: string;
   description: string;
   date: Date;
@@ -10,9 +11,10 @@ export interface ISession extends Document {
   conferenceTitle: string; // Associated Conference Title
 }
 
-const SessionSchema: Schema = new Schema({
+const SessionSchema: Schema<ISession> = new Schema({
+  sessionOrganizer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   title: { type: String, required: true },
-  description: { type: String, required: false },
+  description: { type: String },
   date: { type: Date, required: true },
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },
@@ -20,6 +22,7 @@ const SessionSchema: Schema = new Schema({
   conferenceTitle: { type: String, required: true },
 });
 
+//Session model
 const SessionModel = (mongoose.models.Session as mongoose.Model<ISession>) || mongoose.model<ISession>('Session', SessionSchema);
 
 export default SessionModel;

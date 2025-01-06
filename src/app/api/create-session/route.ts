@@ -1,11 +1,26 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import Session from '@/model/Session';
+import { getServerSession, User } from "next-auth";
+import { authOptions } from '../auth/[...nextauth]/options';
 
 export async function POST(req: Request) {
   try {
     // Connect to the database
     await dbConnect();
+
+    const session = await getServerSession(authOptions);
+    const user: User = session?.user as User;
+
+    if (!session || !session.user) {
+      return new Response(
+          JSON.stringify({
+              success: false,
+              message: "Not Authenticated",
+          }),
+          { status: 401 }
+      );
+  }
 
     // Parse the incoming request body
     const { title, description, date, startTime, endTime, conferenceTitle } = await req.json();
@@ -17,6 +32,7 @@ export async function POST(req: Request) {
 
     // Create a new session
     const newSession = await Session.create({
+      sessionOrganizer: user._id,
       title,
       description,
       date,
