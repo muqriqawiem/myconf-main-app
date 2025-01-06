@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react"; //Add useEffect
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -19,33 +19,115 @@ import { useGetSubmittedPapersQuery } from "@/store/features/PaperApiSlice";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PulseLoader } from "react-spinners";
 import ReviewedPapersComponent from "./(reviewSystem)/ReviewPaperComponent";
-import EditPopup from './EditPopup';
+import EditPopup from "./EditPopup";
 import EditConferencePopup from "./EditConferencePopup";
-import { useParams } from 'next/navigation';
+import { useParams } from "next/navigation";
+import { toast } from "react-toastify";
 import { Toggle } from "@/components/ui/toggle";
 import EditSessionPopup from "./EditSessionPopup";
 import PaymentButton from "../(payment)/pricing/PaymentButton";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
+
+// Confirmation Modal Component
+interface ConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  isLoading: boolean;
+}
+
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, onConfirm, isLoading }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold mb-4">
+          Are you sure you want to end this conference?
+        </h2>
+        <p className="text-gray-600 mb-6">This action cannot be undone.</p>
+        <div className="flex justify-end space-x-4">
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={onConfirm}
+            disabled={isLoading}
+            aria-label={isLoading ? "Ending Conference" : "End Conference"}
+          >
+            {isLoading ? "Ending..." : "End Conference"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Organized Conferences Component
 const OrganizedConferenceComponent = () => {
-  const { data: organizedConferences, isLoading } = useGetOrganizedConferencesQuery();
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [selectedConferenceId, setSelectedConferenceId] = useState<string | null>(null);
+  const [isEndingConference, setIsEndingConference] = useState(false);
+
+  const { data: organizedConferences, isLoading, isFetching, refetch } = useGetOrganizedConferencesQuery();
   const params = useParams();
 
-  //Use state to store the baseURL
-  const [baseUrl, setBaseUrl] = useState('');
+  // Use state to store the baseURL
+  const [baseUrl, setBaseUrl] = useState("");
 
-  //UseEffect to set the baseURL after the component mounts
+  // UseEffect to set the baseURL after the component mounts
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       setBaseUrl(`${window.location.protocol}//${window.location.host}`);
     }
   }, []);
 
+  const handleEndConferenceClick = (conferenceId: string) => {
+    setSelectedConferenceId(conferenceId);
+    setIsConfirmationOpen(true);
+  };
+
+  const confirmEndConference = async () => {
+    if (!selectedConferenceId) return;
+
+    setIsEndingConference(true); // Start loading
+    try {
+      const response = await fetch("/api/end-conference", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ conferenceId: selectedConferenceId }),
+      });
+
+      if (response.ok) {
+        toast.success("Conference has been marked as ended.");
+        refetch(); // Refresh data
+      } else {
+        const errorData = await response.json();
+        if (response.status === 404) {
+          toast.error("Conference not found.");
+        } else if (response.status === 400) {
+          toast.error("Invalid request. Please check the conference ID.");
+        } else {
+          toast.error(errorData.error || "Failed to end conference.");
+        }
+      }
+    } catch (error) {
+      console.error("Error ending conference:", error);
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsEndingConference(false); // Stop loading
+      setIsConfirmationOpen(false);
+      setSelectedConferenceId(null);
+    }
+  };
+
   return (
-    <div className='flex justify-center'>
-      <Card className='w-full border border-gray-200'> {/* Added border and removed shadow */}
+    <div className="flex justify-center">
+      <Card className="w-full border border-gray-200">
         <CardHeader>
           <CardTitle>Organized Conferences</CardTitle>
         </CardHeader>
@@ -60,9 +142,11 @@ const OrganizedConferenceComponent = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                <TableRow className="w-full justify-center items-center text-center ">
-                  <TableCell colSpan={4}><span className="">Loading <PulseLoader className="inline-block" size={6} /></span></TableCell>
+              {isLoading || isFetching ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center">
+                    <PulseLoader size={6} />
+                  </TableCell>
                 </TableRow>
               ) : organizedConferences && organizedConferences.length > 0 ? (
                 organizedConferences.map((organizedConference: any) => {
@@ -77,13 +161,34 @@ const OrganizedConferenceComponent = () => {
                       <TableCell>
                         <div className="flex space-x-2">
                           <Link href={`/dashboard/${organizedConference.conferenceAcronym}`}>
-                            <Button variant={'outline'}>View Papers</Button>
+                            <Button variant={"outline"}>View Papers</Button>
                           </Link>
                           <Link href={invitationUrl} target="_blank">
-                            <Button variant={'outline'}>Send Invitation</Button>
+                            <Button variant={"outline"}>Send Invitation</Button>
                           </Link>
                           <EditConferencePopup conferenceDetails={organizedConference} />
-                          <PaymentButton isPaid={organizedConference.conferenceSecurityDeposit2000Paid}/>
+                          <PaymentButton isPaid={organizedConference.conferenceSecurityDeposit2000Paid} />
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleEndConferenceClick(organizedConference._id)}
+                            disabled={organizedConference.conferenceLifecycleStatus === "ended"}
+                            aria-label={
+                              organizedConference.conferenceLifecycleStatus === "ended"
+                                ? "Conference Ended"
+                                : "End Conference"
+                            }
+                            aria-disabled={organizedConference.conferenceLifecycleStatus === "ended"}
+                            className={
+                              organizedConference.conferenceLifecycleStatus === "ended"
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
+                            }
+                          >
+                            {organizedConference.conferenceLifecycleStatus === "ended"
+                              ? "Conference Ended"
+                              : "End Conference"}
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -98,6 +203,14 @@ const OrganizedConferenceComponent = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {/* End Conference Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isConfirmationOpen}
+        onClose={() => setIsConfirmationOpen(false)}
+        onConfirm={confirmEndConference}
+        isLoading={isEndingConference}
+      />
     </div>
   );
 };
@@ -108,8 +221,8 @@ const OrganizedSessionComponent = () => {
   const params = useParams();
 
   return (
-    <div className='flex justify-center'>
-      <Card className='w-full border border-gray-200'>
+    <div className="flex justify-center">
+      <Card className="w-full border border-gray-200">
         <CardHeader>
           <CardTitle>Organized Sessions</CardTitle>
         </CardHeader>
@@ -125,7 +238,11 @@ const OrganizedSessionComponent = () => {
             <TableBody>
               {isLoading ? (
                 <TableRow className="w-full justify-center items-center text-center">
-                  <TableCell colSpan={3}><span className="">Loading <PulseLoader className="inline-block" size={6} /></span></TableCell>
+                  <TableCell colSpan={3}>
+                    <span className="">
+                      Loading <PulseLoader className="inline-block" size={6} />
+                    </span>
+                  </TableCell>
                 </TableRow>
               ) : organizedSessions && organizedSessions.length > 0 ? (
                 organizedSessions.map((organizedSession: any) => (
@@ -133,7 +250,7 @@ const OrganizedSessionComponent = () => {
                     <TableCell className="font-medium">{organizedSession.title}</TableCell>
                     <TableCell>{moment(organizedSession.createdAt).calendar()}</TableCell>
                     <TableCell>
-                    <EditSessionPopup sessionDetails={organizedSession} />
+                      <EditSessionPopup sessionDetails={organizedSession} />
                     </TableCell>
                   </TableRow>
                 ))
@@ -155,8 +272,8 @@ const SubmittedPaperComponent = () => {
   const { data: submittedPapers, isLoading } = useGetSubmittedPapersQuery();
 
   return (
-    <div className='flex justify-center items-start'>
-      <Card className='w-full border border-gray-200'> {/* Added border and removed shadow */}
+    <div className="flex justify-center items-start">
+      <Card className="w-full border border-gray-200">
         <CardHeader>
           <CardTitle>Submitted Papers</CardTitle>
         </CardHeader>
@@ -174,7 +291,11 @@ const SubmittedPaperComponent = () => {
             <TableBody>
               {isLoading ? (
                 <TableRow className="w-full justify-center items-center text-center ">
-                  <TableCell colSpan={5}><span className="">Loading <PulseLoader className="inline-block" size={6} /></span></TableCell>
+                  <TableCell colSpan={5}>
+                    <span className="">
+                      Loading <PulseLoader className="inline-block" size={6} />
+                    </span>
+                  </TableCell>
                 </TableRow>
               ) : submittedPapers && submittedPapers.length > 0 ? (
                 submittedPapers.map((submittedPaper) => (
@@ -198,7 +319,9 @@ const SubmittedPaperComponent = () => {
                         }
                       })()}
                     </TableCell>
-                    <TableCell><EditPopup {...submittedPaper} /></TableCell>
+                    <TableCell>
+                      <EditPopup {...submittedPaper} />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
@@ -216,19 +339,26 @@ const SubmittedPaperComponent = () => {
 
 // Main Page
 const Page: React.FC = () => {
-  const [role, setRole] = useState<'Conference Chair' | 'Author'>('Conference Chair');
-  const [activeTab, setActiveTab] = useState<'organized' | 'submitted' | 'reviewManagement' | 'organizedSessions'>('organized');
+  const [role, setRole] = useState<"Conference Chair" | "Author">("Conference Chair");
+  const [activeTab, setActiveTab] = useState<"organized" | "submitted" | "reviewManagement" | "organizedSessions">(
+    "organized"
+  );
 
   const handleToggle = () => {
-    const newRole = role === 'Conference Chair' ? 'Author' : 'Conference Chair';
+    const newRole = role === "Conference Chair" ? "Author" : "Conference Chair";
     setRole(newRole);
     // Update the active tab based on the new role
-    setActiveTab(newRole === 'Conference Chair' ? 'organized' : 'submitted');
+    setActiveTab(newRole === "Conference Chair" ? "organized" : "submitted");
   };
 
   // Explicitly type the onValueChange function to accept a string
   const handleTabChange = (value: string) => {
-    if (value === 'organized' || value === 'submitted' || value === 'reviewManagement' || value === 'organizedSessions') {
+    if (
+      value === "organized" ||
+      value === "submitted" ||
+      value === "reviewManagement" ||
+      value === "organizedSessions"
+    ) {
       setActiveTab(value);
     }
   };
@@ -236,9 +366,7 @@ const Page: React.FC = () => {
   return (
     <div className="container mx-auto p-8">
       <div className="flex flex-col items-center mb-8">
-        <h1 className="text-5xl font-extrabold text-gray-800 mb-4">
-          Dashboard
-        </h1>
+        <h1 className="text-5xl font-extrabold text-gray-800 mb-4">Dashboard</h1>
         <div className="flex items-center gap-4">
           <p className="text-lg font-medium text-gray-600">
             Current View: <span className="text-blue-600">{role}</span>
@@ -246,10 +374,10 @@ const Page: React.FC = () => {
           <Toggle
             aria-label="Toggle between Conference Chair and Author views"
             onClick={handleToggle}
-            className={`flex items-center px-4 py-2 bg-gray-200 rounded-lg cursor-pointer transition-colors duration-300
-              ${role === 'Conference Chair' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'}`}
+            className={`flex items-center px-4 py-2 bg-gray-200 rounded-lg cursor-pointer transition-colors duration-300 ${role === "Conference Chair" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600"
+              }`}
           >
-            {role === 'Conference Chair' ? (
+            {role === "Conference Chair" ? (
               <span className="font-medium text-sm transition-opacity duration-300">Switch to Author</span>
             ) : (
               <span className="font-medium text-sm transition-opacity duration-300">Switch to Conference Chair</span>
@@ -260,7 +388,7 @@ const Page: React.FC = () => {
       <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-lg">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="flex justify-center gap-6 mb-8">
-            {role === 'Conference Chair' && (
+            {role === "Conference Chair" && (
               <TabsTrigger
                 value="organized"
                 className="flex-1 text-center text-base font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
@@ -268,7 +396,7 @@ const Page: React.FC = () => {
                 Organized Conferences
               </TabsTrigger>
             )}
-            {role === 'Author' && (
+            {role === "Author" && (
               <TabsTrigger
                 value="submitted"
                 className="flex-1 text-center text-base font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
@@ -276,7 +404,7 @@ const Page: React.FC = () => {
                 Submitted Papers
               </TabsTrigger>
             )}
-            {role === 'Conference Chair' && (
+            {role === "Conference Chair" && (
               <TabsTrigger
                 value="reviewManagement"
                 className="flex-1 text-center text-base font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
@@ -284,7 +412,7 @@ const Page: React.FC = () => {
                 Review Management
               </TabsTrigger>
             )}
-            {role === 'Conference Chair' && (
+            {role === "Conference Chair" && (
               <TabsTrigger
                 value="organizedSessions"
                 className="flex-1 text-center text-base font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
@@ -294,22 +422,22 @@ const Page: React.FC = () => {
             )}
           </TabsList>
 
-          {role === 'Conference Chair' && (
-            <TabsContent value="organized" className="p-4"> {/* Adjusted padding */}
+          {role === "Conference Chair" && (
+            <TabsContent value="organized" className="p-4">
               <OrganizedConferenceComponent />
             </TabsContent>
           )}
-          {role === 'Author' && (
-            <TabsContent value="submitted" className="p-4"> {/* Adjusted padding */}
+          {role === "Author" && (
+            <TabsContent value="submitted" className="p-4">
               <SubmittedPaperComponent />
             </TabsContent>
           )}
-          {role === 'Conference Chair' && (
-            <TabsContent value="reviewManagement" className="p-4"> {/* Adjusted padding */}
+          {role === "Conference Chair" && (
+            <TabsContent value="reviewManagement" className="p-4">
               <ReviewedPapersComponent />
             </TabsContent>
           )}
-          {role === 'Conference Chair' && (
+          {role === "Conference Chair" && (
             <TabsContent value="organizedSessions" className="p-4">
               <OrganizedSessionComponent />
             </TabsContent>
