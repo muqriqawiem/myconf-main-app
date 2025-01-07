@@ -19,6 +19,7 @@ import { useGetSubmittedPapersQuery } from "@/store/features/PaperApiSlice";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PulseLoader } from "react-spinners";
 import ReviewedPapersComponent from "./(reviewSystem)/ReviewPaperComponent";
+import ConferenceAnalyticsComponent from "./(analytics)/AnalyticsComponent";
 import EditPopup from "./EditPopup";
 import EditConferencePopup from "./EditConferencePopup";
 import { useParams } from "next/navigation";
@@ -152,7 +153,6 @@ const OrganizedConferenceComponent = () => {
                 organizedConferences.map((organizedConference: any) => {
                   const profileUrl = `${baseUrl}/submit-paper/${organizedConference.conferenceAcronym}`; // Profile URL
                   const invitationUrl = `${baseUrl}/send-invitation/`; // Invitation URL
-
                   return (
                     <TableRow key={organizedConference._id}>
                       <TableCell className="font-medium">{organizedConference.conferenceAcronym}</TableCell>
@@ -340,7 +340,7 @@ const SubmittedPaperComponent = () => {
 // Main Page
 const Page: React.FC = () => {
   const [role, setRole] = useState<"Conference Chair" | "Author">("Conference Chair");
-  const [activeTab, setActiveTab] = useState<"organized" | "submitted" | "reviewManagement" | "organizedSessions">(
+  const [activeTab, setActiveTab] = useState<"organized" | "submitted" | "reviewManagement" | "organizedSessions" | "analytics">(
     "organized"
   );
 
@@ -357,7 +357,8 @@ const Page: React.FC = () => {
       value === "organized" ||
       value === "submitted" ||
       value === "reviewManagement" ||
-      value === "organizedSessions"
+      value === "organizedSessions" ||
+      value === "analytics"
     ) {
       setActiveTab(value);
     }
@@ -420,6 +421,14 @@ const Page: React.FC = () => {
                 Organized Sessions
               </TabsTrigger>
             )}
+            {role === "Conference Chair" && (
+              <TabsTrigger
+                value="analytics"
+                className="flex-1 text-center text-base font-semibold text-gray-700 hover:text-blue-500 transition-all border-b-2 border-transparent focus:border-blue-500"
+              >
+                User Analytics
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {role === "Conference Chair" && (
@@ -440,6 +449,11 @@ const Page: React.FC = () => {
           {role === "Conference Chair" && (
             <TabsContent value="organizedSessions" className="p-4">
               <OrganizedSessionComponent />
+            </TabsContent>
+          )}
+          {role === "Conference Chair" && (
+            <TabsContent value="analytics" className="p-4">
+              <ConferenceAnalyticsComponent />
             </TabsContent>
           )}
         </Tabs>
